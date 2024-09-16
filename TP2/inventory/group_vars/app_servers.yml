@@ -1,5 +1,5 @@
 
-flask_version: 10
+flask_port: 5000
 flask_user: flask
 flask_scm_ref: main  
 
