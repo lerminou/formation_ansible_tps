@@ -1,0 +1,11 @@
+argument_specs:
+  main:
+    short_description: Description of the flask validation
+    description:
+      - Description of the flask validation
+    options:
+      flask_port:
+        type: "int"
+        required: false
+        default: 5000
+        description: Port to listen for the flask app

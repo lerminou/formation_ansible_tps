@@ -1,0 +1,4 @@
+---
+
+flask_home: /home/admin/
+flask_repo: https://github.com/petersimeth/basic-flask-template.git

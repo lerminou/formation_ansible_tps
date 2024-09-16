@@ -1,0 +1,15 @@
+---
+- name: Deploy haproxy load balancer
+  hosts: load_balancers
+  gather_facts: false 
+  become: true
+
+  tags:
+    - load_balancers
+
+
+  tasks:
+    - import_role:
+        name: haproxy
+      tags: [ proxy, web ]
+

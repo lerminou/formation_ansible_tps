@@ -1,0 +1,10 @@
+[load_balancers]
+frontend1   ansible_connection=local
+
+[app_servers]
+app1   ansible_connection=local
+
+
+[internal:children]
+load_balancers
+app_servers

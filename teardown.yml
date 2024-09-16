@@ -1,0 +1,104 @@
+
+- name: Teardown app_servers flask configuration
+  hosts: app_servers
+  become: true
+  gather_facts: false
+  tags:
+    - application_servers
+  vars:
+    flask_app_name: demo_app
+    flask_user: flask
+    flask_home: /home/admin/
+    flask_repo: https://github.com/petersimeth/basic-flask-template.git
+    flask_scm_ref: main  
+    flask_app_lauch_script: /usr/local/bin/demo_app   
+    virtualenv_name: "venv-{{ flask_app_name }}"  
+    virtualenv_home: /opt/virtual_envs
+    virtualenv_python: /usr/bin/python3
+
+    app_yum_packages:
+      - autoconf
+      - automake
+      - git
+      - gcc
+      - libtool
+      - python3
+      - python3-devel
+      - python3-pip
+
+    pip_dependencies: []
+      #      - virtualenv
+      # - pip  
+      # - psycopg2-binary
+
+  tasks:
+
+    - name: Clean up service when it exists
+      block:
+
+        - name: Check if systemd flask app service file exists
+          stat:
+            path: "/etc/systemd/system/{{ flask_app_name }}.service"
+          register: r_flask_service
+
+        - when: r_flask_service.stat.exists
+          name: Systemd configuration needs stopped and removed
+          block:
+
+            - name: Stop systemd flask app service
+              service: 
+                name: "{{ flask_app_name }}.service"
+                state: stopped
+                enabled: no
+#              ignore_errors: yes
+
+            - name: Remove systemd flask app service file
+              file:
+                path: "{{ __path }}"
+                state: absent
+              loop:
+                - "/etc/systemd/system/{{ flask_app_name }}.service"
+                -  /usr/local/bin/demo_app   
+              loop_control:
+                loop_var: __path
+
+    - name: Remove pre-requisite pip3 packages
+      pip:
+        name: "{{ pip_dependencies }}"
+        state: absent
+          #      ignore_errors: yes
+
+    - name: Remove flask user
+      user:
+        name: "{{ flask_user }}"
+        state: absent
+
+    - name: Remove flask repo and virtualenv
+      file:
+        path: "{{ __path }}"
+        state: absent
+      loop:
+        -  "{{ flask_home }}/{{ flask_app_name }}"
+        -  "{{ virtualenv_home }}/{{ flask_app_name }}"
+      loop_control:
+        loop_var: __path
+
+- name: Teardown haproxy load balancer
+  hosts: load_balancers
+  gather_facts: false 
+  become: true
+
+  vars:
+    load_balancer_packages:
+      - haproxy
+
+  tags:
+    - load_balancers
+
+  tasks:
+
+    - name: Remove load balancer packages
+      package:
+        name: "{{ load_balancer_packages }}"
+        state: absent
+
