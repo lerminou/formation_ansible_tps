@@ -30,7 +30,6 @@
       ansible.builtin.pip:
         name: "{{ pip_dependencies }}"
         state: latest
-        executable: /usr/bin/pip3
 
     - name: "Create virtualenv {{ virtualenv_name }} for Flask"
       ansible.builtin.pip:

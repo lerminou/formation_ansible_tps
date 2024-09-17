@@ -1,0 +1,7 @@
+- name: transform to_camel
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+    - debug:
+        msg: "{{ 'ascent forme pour orange' | to_camel }}"
