@@ -1,0 +1,6 @@
+- name: Checks des perfs
+  hosts: all
+  gather_facts: true
+  roles:
+    - apache
+    - php
